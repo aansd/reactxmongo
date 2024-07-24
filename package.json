@@ -1,21 +1,25 @@
 {
-  "dependencies": {
-    "cors": "^2.8.5",
-    "express": "^4.19.2",
-    "morgan": "^1.10.0",
-    "multer": "^1.4.5-lts.1",
-    "mysql": "^2.18.1",
-    "mysql2": "^3.10.2",
-    "sequelize": "^6.37.3"
-  },
-  "name": "mysql",
+  "name": "fullstack",
   "version": "1.0.0",
-  "main": "app.js",
+  "main": "index.js",
+  "workspaces": [
+    "client",
+    "server"
+  ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node app.js"
+    "client": " npm start --prefix client",
+    "server": "npm start --prefix server",
+    "start": "concurrently \"npm run client\" \"npm run server\"",
+    "install-all": "npm install && npm install --prefix client && npm install --prefix server"
   },
+  "devDependencies": {
+    "concurrently": "^7.6.0"
+  },
+  "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "dependencies": {
+    "react-router-dom": "^6.25.1"
+  }
 }
