@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 import Input from "../../components/Input";
 
 
 const Edit = () => {
-  const { id } = useParams(); // Get the product ID from URL parameters
-
+  const { id } = useParams(); 
+  const navigate = useHistory();
   const [formData, setFormData] = useState({
     name: '',
     price: '',
@@ -14,8 +14,8 @@ const Edit = () => {
   });
 
   useEffect(() => {
-    // Fetch product data when component mounts
-    fetch(`http://localhost:3000/api/v4/product/${id}`)
+
+    fetch(`http://localhost:3000/api/v2/product/${id}`)
       .then(response => response.json())
       .then(data => setFormData({
         name: data.name,
@@ -36,7 +36,7 @@ const Edit = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    fetch(`http://localhost:3000/api/v4/product/${id}`, {
+    fetch(`http://localhost:3000/api/v2/product/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -46,6 +46,7 @@ const Edit = () => {
       .then(response => response.json())
       .then(() => {
         alert('Product Berhasil di Update'); 
+        navigate.push('/');
       })
       .catch(error => (error));
   };

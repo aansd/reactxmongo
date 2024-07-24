@@ -1,41 +1,49 @@
-const Product = require('./models');
-const path = require('path');
+const db = require('../../config/mongodb');
+const {ObjectId} = require('bson');
 const fs = require('fs');
+const path = require('path');
 
 
-const index = (req, res) => {
-    Product.find({})
+const index = (req, res) =>{
+    db.collection('product').find()
+    .toArray()
     .then(result => res.send(result))
     .catch(error => res.send(error));
 }
 
 const view = (req, res) => {
-    const { id } = req.params;
-    Product.findOne({ _id: id })
+    const {id} = req.params;
+    db.collection('product').findOne({_id: new ObjectId(id)})
     .then(result => res.send(result))
     .catch(error => res.send(error));
 }
 
-const create = (req, res) => {
+const store = (req, res) => {
     const {name, price, stock, status} = req.body;
     const image = req.file;
     if(image) {
         const target = path.join(__dirname, '../../uploads', image.originalname);
         fs.renameSync(image.path, target);
-       Product.create({name, price, stock, status, image_url: `http://localhost:3000/public/${image.originalname}`})
+        db.collection('product').insertOne({name, price, stock, status, image_url: `http://localhost:3000/public/${image.originalname}`})
         .then(result => res.send(result))
         .catch(error => res.send(error));
     }
 }
 
-const update = async (req, res) => {
+const destroy = (req, res) => {
     const { id } = req.params;
+    db.collection('product').deleteOne({ _id: new ObjectId(id) })
+    .then(result => res.send(result))
+    .catch(error => res.send(error));
+};
+
+
+  const update = (req, res) => {
+    const id = req.params.id; 
     const { name, price, stock, status } = req.body;
-    const image = req.file;
-    const product = await Product.findOne({ _id: id });
-    if (!product) {
-        return res.status(404).send({ error: 'Product id not found' });
-    }
+    const image = req.file; 
+    
+    
     let updateFields = { name, price, stock, status };
 
     if (image) {
@@ -44,22 +52,18 @@ const update = async (req, res) => {
         updateFields.image_url = `http://localhost:3000/public/${image.originalname}`;
     }
 
-    Product.findByIdAndUpdate(product._id, updateFields, { new: true })
+    db.collection('product').updateOne(
+        { _id: new ObjectId(id) },
+        { $set: updateFields }
+    )
     .then(result => res.send(result))
     .catch(error => res.send(error));
 }
 
-const destroy = (req, res) => {
-    const { id } = req.params;
-    Product.findByIdAndDelete({_id: id})
-    .then(result => res.send(result))
-    .catch(error => res.send(error));
-  }
-
 module.exports = {
     index,
     view,
-    create,
+    store,
     update,
     destroy
 }

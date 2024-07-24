@@ -7,7 +7,7 @@ const Detail = () => {
   const [product, setProduct] = useState(null);
 
   useEffect(() => {
-    fetch(`http://localhost:3000/api/v4/product/${id}`)
+    fetch(`http://localhost:3000/api/v2/product/${id}`)
       .then(response => response.json())
       .then(data => setProduct(data))
       .catch(error => (error));
@@ -35,6 +35,10 @@ const Detail = () => {
             <tr>
               <td>Stock</td>
               <td>: {product.stock}</td>
+            </tr>
+            <tr>
+              <td>Image</td>
+              <td>  <img src={product.image_url} alt="" width={200} height={200}/></td>
             </tr>
           </tbody>
         </table>

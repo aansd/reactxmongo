@@ -7,7 +7,7 @@ const Home = () => {
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
-    fetch('http://localhost:3000/api/v4/product')
+    fetch('http://localhost:3000/api/v2/product')
       .then(response => response.json())
       .then(data => setProducts(data))
       .catch(error => console.error('Error fetching products:', error));
@@ -15,7 +15,7 @@ const Home = () => {
 
   const handleDelete = (id) => {
     if (window.confirm('Apakah anda yakin ingin menghapus product ini?')) {
-      fetch(`http://localhost:3000/api/v4/product/${id}`, {
+      fetch(`http://localhost:3000/api/v2/product/${id}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -24,6 +24,7 @@ const Home = () => {
         .then(response => response.json())
         .then(() => {
           setProducts(products.filter(product => product._id !== id));
+          alert('Product Berhasil di Hapus'); 
         })
         .catch(error => console.error('Error deleting product:', error));
     }
@@ -33,7 +34,10 @@ const Home = () => {
     setSearchQuery(e.target.value);
   };
 
-  // Filter products based on the search query
+  const formatPrice = (price) => {
+    return new Intl.NumberFormat('id-ID').format(price);
+  };
+
   const filteredProducts = products.filter(product =>
     product.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -64,7 +68,7 @@ const Home = () => {
               <tr key={product._id}>
                 <td>{product._id}</td>
                 <td>{product.name}</td>
-                <td className="text-right">{`RP. ${product.price}`}</td>
+                <td className="text-right">{`RP. ${formatPrice(product.price)}`}</td>
                 <td className="text-center">
                   <Link to={`/detail/${product._id}`} className="btn btn-sm btn-info">Detail</Link>
                   <Link to={`/edit/${product._id}`} className="btn btn-sm btn-warning">Edit</Link>
